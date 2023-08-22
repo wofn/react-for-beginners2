@@ -1,54 +1,41 @@
 import { useEffect, useState } from "react";
 
 function App() {
-  const [money, setMoney] = useState(0);
-  const onChange = (event) => {
-    setMoney(event.target.value);
-  };
-
   const [loading, setLoading] = useState(true);
-  const [coins, setCoins] = useState([]);
+  const [movies, setMovies] = useState([]);
+  const getMovies = async () => {
+    const json = await (
+      await fetch(
+        `https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year`
+      )
+    ).json();
+    setMovies(json.data.movies);
+    setLoading(false);
+  };
   useEffect(() => {
-    fetch("https://api.coinpaprika.com/v1/tickers")
-      .then((Response) => Response.json())
-      .then((json) => {
-        setCoins(json);
-        setLoading(false);
-      });
+    getMovies();
   }, []);
+  console.log(movies);
   return (
     <div>
-      <input
-        onChange={onChange}
-        type="number"
-        value={money}
-        placeholder="Write the money you have"
-      />
-
-      <h1>
-        The Coins!(
-        {
-          coins.filter((coin) =>
-            money === 0 ? true : coin.quotes.USD.price > money
-          ).length
-        }
-        )
-      </h1>
       {loading ? (
-        <strong>Loading...</strong>
+        <h1>Loading...</h1>
       ) : (
-        <select>
-          {coins
-            .filter((coin) =>
-              money === 0 ? true : coin.quotes.USD.price > money
-            )
-            .map((coin) => (
-              <option>
-                {coin.name}({coin.symbol}): ${coin.quotes.USD.price} BTC
-              </option>
-            ))}
-        </select>
-      )}
+        <div>
+          {movies.map((movie) => (
+            <div key={movie.id}>
+              <img src={movie.medium_cover_image} />
+              <h2>{movie.title}</h2>
+              <p>{movie.summary}</p>
+              <ul>
+                {movie.genres.map((g) => (
+                  <li key={g}>{g}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}{" "}
     </div>
   );
 }
