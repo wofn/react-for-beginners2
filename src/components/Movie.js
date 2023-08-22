@@ -1,10 +1,13 @@
 import PropTypes from "prop-types";
-function Movie({ mediumCoverImage, title, summary, genres }) {
-  //Movie component는 이 properties를 다 부모 component로부터 받아온다.
+import { Link } from "react-router-dom";
+
+function Movie({ coverImg, title, summary, genres }) {
   return (
     <div>
-      <img src={mediumCoverImage} alt={title} />
-      <h2>{title}</h2>
+      <img src={coverImg} alt={title} />
+      <h2>
+        <Link to="/movie">{title}</Link>
+      </h2>
       <p>{summary}</p>
       <ul>
         {genres.map((g) => (
@@ -16,7 +19,7 @@ function Movie({ mediumCoverImage, title, summary, genres }) {
 }
 
 Movie.prototype = {
-  mediumCoverImage: PropTypes.string.isRequired,
+  coverImg: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   summary: PropTypes.string.isRequired,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
